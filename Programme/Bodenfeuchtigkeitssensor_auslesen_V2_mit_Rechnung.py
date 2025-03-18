@@ -14,7 +14,7 @@ from machine import Pin, ADC
 import time
 
 #Ausgangs-Pin für das Relais definieren
-relais_in1 = Pin(3, Pin.OUT)
+relais_in1 = Pin(8, Pin.OUT)
 
 # ADC-Pin für den Sensor
 soil_pin = Pin(5)
