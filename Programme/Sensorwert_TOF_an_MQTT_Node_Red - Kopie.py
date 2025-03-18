@@ -13,11 +13,11 @@ i2c = I2C(0, scl=machine.Pin(14), sda=machine.Pin(13))
 tof_sensor = VL53L0X.VL53L0X(i2c)
 
 # WLAN-Parameter
-ssid = 'KrustyKrab2'
-password = 'WerderBremen2501'
+ssid = 'BZTG-IoT'
+password = 'WerderBremen24'
 
 # MQTT-Setup
-BROKER_IP = b"192.168.33.79"  # Ersetze durch deine PC-IP
+BROKER_IP = b"192.168.1.175"  # Ersetze durch deine PC-IP
 BROKER_PORT = 1883  # Standardport
 CLIENT_ID = b"ESP32_Client"
 TOPIC = b"Zuhause/Wohnung/BloomBuddy"
@@ -45,24 +45,24 @@ except Exception as e:
 
 while True:
 
-# Liste zum Speichern der Messwerte
+    # Liste zum Speichern der Messwerte
     fuellstand_roh = []
-    
-# 10 Messwerte aufnehmen
+
+    # 10 Messwerte aufnehmen
     for i in range(10):
         fuellstand_roh.append(tof_sensor.read())
         time.sleep(0.1)  # Kurze Pause zwischen den Messungen
 
-    # Ersten und letzten Wert mit pop() entfernen
-    fuellstand_roh.pop(0)  # Entfernt den ersten Wert
-    fuellstand_roh.pop()   # Entfernt den letzten Wert
-    
-    #Messwerte in der Liste kontrollieren
+    # Höchsten und niedrigsten Wert entfernen
+    fuellstand_roh.remove(max(fuellstand_roh))  # Entfernt den höchsten Wert
+    fuellstand_roh.remove(min(fuellstand_roh))  # Entfernt den niedrigsten Wert
+
+    # Messwerte in der Liste kontrollieren
     print(fuellstand_roh)
-    
+
     # Mittelwert berechnen
     fuellstand = round(sum(fuellstand_roh) / len(fuellstand_roh))
-    
+
     print(f"Entfernung: {fuellstand} mm")
     
     # Daten als JSON-Objekt erstellen
