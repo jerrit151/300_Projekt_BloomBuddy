@@ -7,7 +7,7 @@ import VL53L0X
 import json
 
 # I2C Konfiguration
-i2c = I2C(0, scl=machine.Pin(14), sda=machine.Pin(13))
+i2c = I2C(0, scl=machine.Pin(12), sda=machine.Pin(13))
 
 # VL53L0X Objekt erstellen
 tof_sensor = VL53L0X.VL53L0X(i2c)
