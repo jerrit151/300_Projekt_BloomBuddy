@@ -4,6 +4,7 @@ import network
 from simple import MQTTClient
 from machine import SoftI2C
 import VL53L0X
+from bh1750 import BH1750
 from aht import AHT21
 import json
 
@@ -13,6 +14,7 @@ i2c = SoftI2C(scl=machine.Pin(12), sda=machine.Pin(13))
 # Sensoren initialisieren
 aht21_sensor = AHT21(i2c)
 tof_sensor = VL53L0X.VL53L0X(i2c)
+bh1750_sensor = BH1750(i2c)
 
 # WLAN-Parameter
 ssid = 'KrustyKrab2'
@@ -51,10 +53,11 @@ except Exception as e:
         pass
 
 while True:
-    # Messwerte sammeln
+    # Listen zum speichern der Messwerte
     fuellstand_roh = []
     temperatur_roh = []
     feuchtigkeit_roh = []
+    helligkeit_roh = []
 
     for i in range(10):
         fuellstand_roh.append(tof_sensor.read())
@@ -65,6 +68,11 @@ while True:
         aht21_sensor.measure()
         temperatur_roh.append(aht21_sensor.temperature)
         feuchtigkeit_roh.append(aht21_sensor.humidity)
+        time.sleep(0.1)
+        
+    for i in range(10):
+        # ONCE_HIRES_1-Modus, wird verwendet da dieser in der Bibliothek verwendet wird
+        helligkeit_roh.append(bh1750_sensor.luminance(0x20))
         time.sleep(0.1)
 
     # Höchsten und Niedrigsten Messwert entfernen aus den jeweiligen Listen entfernen
@@ -79,21 +87,48 @@ while True:
     if len(feuchtigkeit_roh) > 2:
         feuchtigkeit_roh.remove(max(feuchtigkeit_roh))
         feuchtigkeit_roh.remove(min(feuchtigkeit_roh))
+        
+    if len(helligkeit_roh) > 2:     
+        helligkeit_roh.remove(max(helligkeit_roh))
+        helligkeit_roh.remove(min(helligkeit_roh))
 
     # Durchschnittswerte berechnen für eine höhere Genauigkeit
     fuellstand = round(sum(fuellstand_roh) / len(fuellstand_roh))
     temperatur = round(sum(temperatur_roh) / len(temperatur_roh))
     feuchtigkeit = round(sum(feuchtigkeit_roh) / len(feuchtigkeit_roh))
+    helligkeit = round(sum(helligkeit_roh) / len(helligkeit_roh))
+    
+    # Ergebnisse ausgeben
+    print(f"Entfernung: {fuellstand} mm")
+    print(f"Durchschnittliche Temperatur: {temperatur}°C")
+    print(f"Durchschnittliche Luftfeuchtigkeit: {feuchtigkeit}%")
+    print(f"Durchschnittliche Helligkeit: {helligkeit}lux")
 
-    # Daten als JSON senden
+    # Daten als JSON-Objekt erstellen
     data = {
         "Fuellstand": fuellstand,
         "Temperatur": temperatur,
-        "Luftfeuchtigkeit": feuchtigkeit
+        "Luftfeuchtigkeit": feuchtigkeit,
+        "Helligkeit": helligkeit
     }
-    json_data = json.dumps(data).encode()
-
+    
+    # JSON-Objekt in eine Zeichenkette umwandeln
+    json_data = json.dumps(data)
+    
+    # JSON-Daten über MQTT senden
     client.publish(TOPIC, json_data)
+    
+    # Listen nach Berechnung leeren um falsche Messwerte zu vermeiden
+    fuellstand_roh.clear()
+    temperatur_roh.clear()
+    feuchtigkeit_roh.clear()
+    helligkeit_roh.clear()
+    # Prüfen, ob die Liste wirklich leer ist
+    print("Liste nach dem Leeren:", fuellstand_roh)
+    print("Liste nach dem Leeren:", temperatur_roh)
+    print("Liste nach dem Leeren:", feuchtigkeit_roh)
+    print("Liste nach dem Leeren:", helligkeit_roh)
+    # Rückmeldung ob der Wert gesendet wurde
     print(f"Sensordaten gesendet: {json_data}")
-    # Messung wird alle 20sek wiederholt, im späteren Betrieb soll die Zeit deutlich länger sein
+    
     time.sleep(20)
