@@ -4,7 +4,7 @@ Programm: 		Automatische Pflanzenbewässerung
 Version: 		V1.0
 
 Programmierer: 	Schnaible
-Datum:			25.03.2025
+Datum:			14.04.2025
 
 Hardware:       ESP32 S3
 Sensor: 		Capacitive Soil Moisture Sensor V2.0.0, AHT21, BH1750, VL53L0
@@ -12,7 +12,7 @@ Sensor: 		Capacitive Soil Moisture Sensor V2.0.0, AHT21, BH1750, VL53L0
 '''
 
 import machine
-from machine import Pin, ADC, SoftI2C
+from machine import Pin, ADC, SoftI2C, deepsleep
 import time
 import network
 from simple import MQTTClient
@@ -39,7 +39,7 @@ boden_adc.width(ADC.WIDTH_12BIT)  # Bereich: 0 bis 4095
 trocken_wert = 0  # Trockener Boden
 nass_wert = 100  # Nasser Boden
 
-# ADC-Werte für trockenen und nassen Boden (müssen experimentell ermittelt werden)
+# ADC-Werte für trockenen und nassen Boden (müssen experimentell ermittelt werden, je nachdem wie Nass der Boden für die Pflanze sein soll)
 # Hier sind Platzhalter, ersetzen Sie diese durch die tatsächlichen ADC-Werte
 trocken_adc_wert = 3070  # Beispielwert für trockenen Boden, reagiert sehr empfindlich auf kleine Änderungen mit diesem Wert in der Luft ca. 2%
 nass_adc_wert = 1700  # Beispielwert für nassen Boden
@@ -49,12 +49,16 @@ aht21_sensor = AHT21(i2c)
 tof_sensor = VL53L0X.VL53L0X(i2c)
 bh1750_sensor = BH1750(i2c)
 
-# WLAN-Parameter
-ssid = 'BZTG-IoT'
-password = 'WerderBremen24'
+# WLAN-Parameter für die Schule
+#ssid = 'BZTG-IoT'
+#password = 'WerderBremen24'
+
+# WLAN-Parameter für Zuhause
+ssid = 'KrustyKrab2'
+password = 'WerderBremen2501'
 
 # MQTT-Setup
-BROKER_IP = b"192.168.1.211"
+BROKER_IP = b"192.168.33.79"
 BROKER_PORT = 1883
 CLIENT_ID = b"ESP32_Client"
 TOPIC = b"Zuhause/Wohnung/BloomBuddy"
@@ -188,4 +192,11 @@ while True:
     # Rückmeldung ob der Wert gesendet wurde
     print(f"Sensordaten gesendet: {json_data}")
     
-    time.sleep(45)
+    #Ist der Boden genug gewässert, geht der ESP32 in einen Deepsleep um Strom zu sparen
+    if bodenfeuchtigkeit >= 90:
+        print("ESP32 wird in Sleep versetzt")
+        #Ein Wert von 900 entspricht 15min Wartezeit, im späteren Einsatz optimal
+        time.sleep(30)
+        
+    time.sleep(15)
+        
