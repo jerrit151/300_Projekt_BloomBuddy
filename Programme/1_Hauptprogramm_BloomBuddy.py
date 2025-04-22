@@ -3,8 +3,8 @@
 Programm: 		Automatische Pflanzenbewässerung
 Version: 		V1.0
 
-Programmierer: 	Schnaible
-Datum:			14.04.2025
+Programmierer: 	Jerrit Schnaible
+Datum:			22.04.2025
 
 Hardware:       ESP32 S3
 Sensor: 		Capacitive Soil Moisture Sensor V2.0.0, AHT21, BH1750, VL53L0
@@ -24,7 +24,7 @@ import json
 # I2C-Bus konfigurieren (gemeinsam für alle drei I2C-fähigen-Sensoren)
 i2c = SoftI2C(scl=machine.Pin(12), sda=machine.Pin(13))
 
-#Ausgangs-Pin für das Relais definieren
+# Ausgangs-Pin für das Relais definieren
 relais_in1 = Pin(8, Pin.OUT)
 
 # ADC-Pin für den Sensor
@@ -50,15 +50,15 @@ tof_sensor = VL53L0X.VL53L0X(i2c)
 bh1750_sensor = BH1750(i2c)
 
 # WLAN-Parameter für die Schule
-#ssid = 'BZTG-IoT'
-#password = 'WerderBremen24'
+ssid = 'BZTG-IoT'
+password = 'WerderBremen24'
 
 # WLAN-Parameter für Zuhause
-ssid = 'KrustyKrab2'
-password = 'WerderBremen2501'
+# ssid = 'KrustyKrab2'
+# password = 'WerderBremen2501'
 
 # MQTT-Setup
-BROKER_IP = b"192.168.33.79"
+BROKER_IP = b"192.168.1.170"
 BROKER_PORT = 1883
 CLIENT_ID = b"ESP32_Client"
 TOPIC = b"Zuhause/Wohnung/BloomBuddy"
@@ -91,6 +91,12 @@ except Exception as e:
 
 while True:
     
+    # Listen zum speichern der Messwerte
+    fuellstand_roh = []
+    temperatur_roh = []
+    feuchtigkeit_roh = []
+    helligkeit_roh = []
+    
     # Sensorwert lesen
     boden_adc_wert = boden_adc.read()
         
@@ -105,17 +111,10 @@ while True:
     # Fällt die Bodenfeuchtigkeit unter 20%, soll das Relais der Pumpe angesteuert werden
     if bodenfeuchtigkeit <= 20:
         relais_in1.value(1)  # Ausgang auf TRUE setzen
-        print("Relais angesteuert, Pumpe ein")
+        print("Relais angesteuert, Pumpe ein, Wasser läuft")
     else:
-        relais_in1.value(0)  # Ist die Bodenfeuchtigkeit nicht unter 20%, bleibt das Relais und die Pumpe aus
+        relais_in1.value(0)  # Ist die Bodenfeuchtigkeit über 20%, bleibt das Relais und die Pumpe aus
         print("Relais nicht angesteuert, Pumpe aus")
-
-   
-    # Listen zum speichern der Messwerte
-    fuellstand_roh = []
-    temperatur_roh = []
-    feuchtigkeit_roh = []
-    helligkeit_roh = []
 
     for i in range(10):
         fuellstand_roh.append(tof_sensor.read())
@@ -177,6 +176,9 @@ while True:
     # JSON-Daten über MQTT senden
     client.publish(TOPIC, json_data)
     
+    # Rückmeldung ob der Wert gesendet wurde
+    print(f"Sensordaten gesendet: {json_data}")
+    
     # Listen nach Berechnung leeren um falsche Messwerte zu vermeiden
     fuellstand_roh.clear()
     temperatur_roh.clear()
@@ -189,10 +191,7 @@ while True:
     print("Liste nach dem Leeren:", feuchtigkeit_roh)
     print("Liste nach dem Leeren:", helligkeit_roh)
     
-    # Rückmeldung ob der Wert gesendet wurde
-    print(f"Sensordaten gesendet: {json_data}")
-    
-    #Ist der Boden genug gewässert, geht der ESP32 in einen Deepsleep um Strom zu sparen
+    #Ist der Boden genug gewässert, geht der ESP32 in einen längeren Sleep um Strom zu sparen
     if bodenfeuchtigkeit >= 90:
         print("ESP32 wird in Sleep versetzt")
         #Ein Wert von 900 entspricht 15min Wartezeit, im späteren Einsatz optimal
