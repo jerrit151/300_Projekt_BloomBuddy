@@ -103,8 +103,8 @@ while True:
     # Berechnung des Feuchtigkeitswertes basierend auf den Kalibrierwerten
     bodenfeuchtigkeit = ((boden_adc_wert - nass_adc_wert) / (trocken_adc_wert - nass_adc_wert)) * (trocken_wert - nass_wert) + nass_wert
         
-    # Sicherstellen, dass der Wert im Bereich von 0 bis 100 bleibt
-    bodenfeuchtigkeit = max(0, min(bodenfeuchtigkeit, 100))
+    # Sicherstellen, dass der Wert im Bereich von 0 bis 100 bleibt und gerundet wird
+    bodenfeuchtigkeit = round(max(0, min(bodenfeuchtigkeit, 100)))
     # Wert der Bodenfeuchtigkeit ausgeben    
     print(f'Bodenfeuchtigkeit: {bodenfeuchtigkeit:.1f}%')
         
@@ -198,4 +198,4 @@ while True:
         time.sleep(30)
         
     time.sleep(15)
-        
+       
