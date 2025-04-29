@@ -4,7 +4,7 @@ Programm: 		Automatische Pflanzenbewässerung
 Version: 		V1.0
 
 Programmierer: 	Jerrit Schnaible
-Datum:			22.04.2025
+Datum:			29.04.2025
 
 Hardware:       ESP32 S3
 Sensor: 		Capacitive Soil Moisture Sensor V2.0.0, AHT21, BH1750, VL53L0
@@ -22,13 +22,13 @@ from aht import AHT21
 import json
 
 # I2C-Bus konfigurieren (gemeinsam für alle drei I2C-fähigen-Sensoren)
-i2c = SoftI2C(scl=machine.Pin(12), sda=machine.Pin(13))
+i2c = SoftI2C(scl=machine.Pin(4), sda=machine.Pin(5))
 
 # Ausgangs-Pin für das Relais definieren
-relais_in1 = Pin(8, Pin.OUT)
+relais_in1 = Pin(7, Pin.OUT)
 
 # ADC-Pin für den Sensor
-bodenfeuchte_sensor = Pin(5)
+bodenfeuchte_sensor = Pin(6)
 boden_adc = ADC(bodenfeuchte_sensor)
 
 # ADC-Einstellungen
@@ -50,15 +50,15 @@ tof_sensor = VL53L0X.VL53L0X(i2c)
 bh1750_sensor = BH1750(i2c)
 
 # WLAN-Parameter für die Schule
-ssid = 'BZTG-IoT'
-password = 'WerderBremen24'
+#ssid = 'BZTG-IoT'
+#password = 'WerderBremen24'
 
 # WLAN-Parameter für Zuhause
-# ssid = 'KrustyKrab2'
-# password = 'WerderBremen2501'
+ssid = 'KrustyKrab2'
+password = 'WerderBremen2501'
 
 # MQTT-Setup
-BROKER_IP = b"192.168.1.170"
+BROKER_IP = b"192.168.33.79"
 BROKER_PORT = 1883
 CLIENT_ID = b"ESP32_Client"
 TOPIC = b"Zuhause/Wohnung/BloomBuddy"
