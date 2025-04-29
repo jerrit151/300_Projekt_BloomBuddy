@@ -49,9 +49,12 @@ import json
 i2c = SoftI2C(scl=machine.Pin(4), sda=machine.Pin(5))
 
 # Ausgangs-Pin für das Relais definieren, Werte initialiseren
-relais_in1 = Pin(7, Pin.OUT)
+relais_in1 = Pin(8, Pin.OUT)
 pumpe_laeuft = False
 startzeit = 0
+#Für die Steuerung der Pumpe per MQTT über Node-Red
+manuelle_pumpe = False
+automatik_modus = True
 
 # ADC-Pin für den Sensor
 bodenfeuchte_sensor = Pin(15)
@@ -123,10 +126,47 @@ except Exception as e:
     while True:
         pass
 
+# MQTT Nachrichten Abfrage zur Steuerung der Pumpe über den Handbetrieb
+def mqtt_callback(topic, msg):
+    global manuelle_pumpe, pumpe_laeuft, startzeit, automatik_modus
+
+    topic_str = topic.decode()
+    payload = msg.decode()
+    print(f"MQTT empfangen → Topic: {topic_str} | Payload: {payload}")
+
+    if topic_str == "Zuhause/Wohnung/BloomBuddy":
+        # Nur auf Schalter1-Status achten
+        if payload.startswith("Schalter1:"):
+            status = payload.split(":", 1)[1].strip().strip('"')
+            if status == "ON":
+                # Manuellen Modus aktivieren
+                manuelle_pumpe = True
+                automatik_modus = False  # Automatikmodus deaktivieren
+                relais_in1.value(1)  # Pumpe einschalten
+                startzeit = time.ticks_ms()
+                pumpe_laeuft = True
+                print("Pumpe manuell eingeschaltet, Automatik deaktiviert")
+            elif status == "OFF":
+                # Manuellen Modus deaktivieren
+                manuelle_pumpe = False
+                automatik_modus = True  # Automatikmodus wieder aktivieren
+                relais_in1.value(0)  # Pumpe ausschalten
+                pumpe_laeuft = False
+                print("Pumpe manuell ausgeschaltet, Automatik aktiviert")
+            else:
+                print("Unbekannter Schalter-Status:", status)
+
+client.set_callback(mqtt_callback)
+client.subscribe(TOPIC)  # nur das eine Topic
+print("MQTT-Abonnement auf", TOPIC.decode(), "aktiviert")
+
+
 # === Hauptprogrammschleife ===
 
 while True:
     
+    client.check_msg()  # Prüft, ob neue MQTT-Nachricht da ist
+
     # --- Bodenfeuchtigkeit erfassen & Pumpensteuerung ---
     
     # Sensorwert lesen
@@ -140,23 +180,31 @@ while True:
     # Wert der Bodenfeuchtigkeit ausgeben    
     print(f'Bodenfeuchtigkeit: {bodenfeuchtigkeit:.1f}%')
         
-    if bodenfeuchtigkeit <= 40 and not pumpe_laeuft:
-        relais_in1.value(1)          # Pumpe einschalten
-        startzeit = time.ticks_ms()  # Startzeit merken
+    # --- Pumpensteuerung (automatisch nur wenn kein manueller Modus aktiv ist) ---
+
+    if automatik_modus and bodenfeuchtigkeit <= 40 and not pumpe_laeuft:
+        relais_in1.value(1)
+        startzeit = time.ticks_ms()
         pumpe_laeuft = True
-        print("Relais angesteuert, Pumpe ein, Wasser läuft")
-        
+        print("Automatik: Pumpe EIN (wegen Bodenfeuchtigkeit)")
+
     if pumpe_laeuft:
-        # Zeitdifferenz berechnen um 15 Sekunden abzumessen
         vergangene_zeit = time.ticks_diff(time.ticks_ms(), startzeit)
-        if vergangene_zeit >= 15000:  # 15 Sekunden = 15000 Millisekunden
-            relais_in1.value(0)       # Pumpe ausschalten
-            pumpe_laeuft = False
-            print("Pumpe gestoppt nach 15 Sekunden")
-    else:
-        # Ist die Bodenfeuchtigkeit über 40%, bleibt das Relais und die Pumpe aus
+
+        if manuelle_pumpe:
+            print(f"Pumpe läuft manuell seit {vergangene_zeit} ms")
+            # Keine Zeitabschaltung im manuellen Modus
+        else:
+            if vergangene_zeit >= 15000:
+                relais_in1.value(0)
+                pumpe_laeuft = False
+                print("Automatik: Pumpe AUS nach 15 Sekunden")
+
+    if not pumpe_laeuft and not manuelle_pumpe:
         relais_in1.value(0)
-        print("Relais nicht angesteuert, Pumpe aus")
+        print("Pumpe bleibt AUS")
+
+
     
     # --- Sensorwerte sammeln (ToF, AHT21, BH1750) ---
     
@@ -167,11 +215,13 @@ while True:
     helligkeit_roh = []
 
     for i in range(10):
+        client.check_msg()  # Neue Nachrichten über MQTT prüfen
         # Messung muss getriggert werden damit die Liste gefüllt werden kann
         fuellstand_roh.append(tof_sensor.read())
         time.sleep(0.1)
 
     for i in range(10):
+        client.check_msg()  # Neue Nachrichten über MQTT prüfen
         # Messung muss getriggert werden damit die Liste gefüllt werden kann, Messwerte werden in die Liste geschrieben
         aht21_sensor.measure()
         temperatur_roh.append(aht21_sensor.temperature)
@@ -179,6 +229,7 @@ while True:
         time.sleep(0.1)
         
     for i in range(10):
+        client.check_msg()  # Neue Nachrichten über MQTT prüfen
         # ONCE_HIRES_1-Modus, wird verwendet da dieser in der Bibliothek verwendet wird, dieser löst Messung aus
         helligkeit_roh.append(bh1750_sensor.luminance(0x20))
         time.sleep(0.1)
@@ -248,10 +299,10 @@ while True:
     
     # --- Energiesparen: Bei hoher Bodenfeuchtigkeit Pause einlegen ---
     
-    if bodenfeuchtigkeit >= 80:
-        print("ESP32 wird in Sleep versetzt")
+    #if bodenfeuchtigkeit >= 80:
+        #print("ESP32 wird in Sleep versetzt")
         #Ein Wert von 900 entspricht 15min Wartezeit, im späteren Einsatz
-        time.sleep(30)
+        #time.sleep(30)
         
     # --- Standardwartezeit zwischen Messzyklen ---
     
