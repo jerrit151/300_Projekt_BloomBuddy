@@ -164,6 +164,7 @@ print("MQTT-Abonnement auf", TOPIC.decode(), "aktiviert")
 # === Hauptprogrammschleife ===
 
 while True:
+    
     client.check_msg()  # Prüft, ob neue MQTT-Nachricht da ist
 
     # --- Bodenfeuchtigkeit erfassen & Pumpensteuerung ---
@@ -176,11 +177,11 @@ while True:
         
     # Sicherstellen, dass der Wert im Bereich von 0 bis 100 bleibt und gerundet wird
     bodenfeuchtigkeit = round(max(0, min(bodenfeuchtigkeit, 100)))
+    # Wert der Bodenfeuchtigkeit ausgeben    
     print(f'Bodenfeuchtigkeit: {bodenfeuchtigkeit:.1f}%')
+        
+    # --- Pumpensteuerung (automatisch nur wenn kein manueller Modus aktiv ist) ---
 
-    # --- Pumpensteuerung ---
-    
-    # Nur im Automatikmodus die Pumpe steuern
     if automatik_modus and bodenfeuchtigkeit <= 40 and not pumpe_laeuft:
         relais_in1.value(1)
         startzeit = time.ticks_ms()
@@ -191,7 +192,6 @@ while True:
         vergangene_zeit = time.ticks_diff(time.ticks_ms(), startzeit)
 
         if manuelle_pumpe:
-            # Manuelle Steuerung hat Vorrang
             print(f"Pumpe läuft manuell seit {vergangene_zeit} ms")
             # Keine Zeitabschaltung im manuellen Modus
         else:
@@ -203,10 +203,6 @@ while True:
     if not pumpe_laeuft and not manuelle_pumpe:
         relais_in1.value(0)
         print("Pumpe bleibt AUS")
-    
-    # --- Sensorwerte sammeln und MQTT senden (bleibt unverändert) ---
-    ...
-
 
 
     
