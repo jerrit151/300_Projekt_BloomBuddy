@@ -11,7 +11,8 @@
 # automatischen Bewässerung einer Pflanze an. Die Sensordaten werden zusätzlich per MQTT veröffentlicht,
 # mit Node-Red verarbeitet und anschließend auf der UI angezeigt. Unter anderem werden die Daten per Node-Red
 # auch in eine Datenbank (MariaDB) geschrieben und eine Push-Benachrichtigung ausgegeben wenn der Füllstand des Wassertanks unter
-# 20% fällt. In diesem Fall wird dann eine E-Mail versandt.
+# 20% fällt. In diesem Fall wird dann eine E-Mail versandt. Zusätzlich kann die Pumpe manuell über das Node-Red-Dashboard gesteuert werden.
+# Die manuelle Steuerung der Pumpe hat jederzeit Vorrang vor dem Automatikbetrieb
 #
 # Hardware:
 # - ESP32 S3
