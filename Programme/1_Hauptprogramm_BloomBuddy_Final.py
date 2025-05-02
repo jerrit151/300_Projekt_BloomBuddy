@@ -287,5 +287,5 @@ while True:
         
     # --- Standardwartezeit zwischen Messzyklen ---
     
-    time.sleep(5)
+    time.sleep(1)
        
