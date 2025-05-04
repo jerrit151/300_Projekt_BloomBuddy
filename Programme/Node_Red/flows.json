@@ -184,11 +184,11 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 1430,
+        "x": 870,
         "y": 120,
         "wires": [
             [
-                "f89ef3408b2ed91f"
+                "7cc407de9bcdddc7"
             ]
         ]
     },
@@ -205,8 +205,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1100,
-        "y": 120,
+        "x": 1280,
+        "y": 100,
         "wires": []
     },
     {
