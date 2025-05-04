@@ -3,7 +3,7 @@
 # Programm:    	Automatische Pflanzenbewässerung
 # Version:     	V1.0
 # Programmierer: Jerrit Schnaible
-# Datum:       	29.04.2025
+# Datum:       	02.05.2025
 #
 # Beschreibung:
 # Dieses Programm liest regelmäßig Sensordaten ein (Bodenfeuchtigkeit, Entfernung (Füllstand), Temperatur,
@@ -12,7 +12,7 @@
 # mit Node-Red verarbeitet und anschließend auf der UI angezeigt. Unter anderem werden die Daten per Node-Red
 # auch in eine Datenbank (MariaDB) geschrieben und eine Push-Benachrichtigung ausgegeben wenn der Füllstand des Wassertanks unter
 # 20% fällt. In diesem Fall wird dann eine E-Mail versandt. Zusätzlich kann die Pumpe manuell über das Node-Red-Dashboard gesteuert werden.
-# Die manuelle Steuerung der Pumpe hat jederzeit Vorrang vor dem Automatikbetrieb
+# Die manuelle Steuerung der Pumpe hat jederzeit Vorrang vor dem Automatikbetrieb.
 #
 # Hardware:
 # - ESP32 S3
