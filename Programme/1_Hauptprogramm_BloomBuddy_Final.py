@@ -11,7 +11,8 @@
 # automatischen Bewässerung einer Pflanze an. Die Sensordaten werden zusätzlich per MQTT veröffentlicht,
 # mit Node-Red verarbeitet und anschließend auf der UI angezeigt. Unter anderem werden die Daten per Node-Red
 # auch in eine Datenbank (MariaDB) geschrieben und eine Push-Benachrichtigung ausgegeben wenn der Füllstand des Wassertanks unter
-# 20% fällt. In diesem Fall wird dann eine E-Mail versandt. Zusätzlich kann die Pumpe manuell über das Node-Red-Dashboard gesteuert werden.
+# 20% fällt. In diesem Fall wird dann eine E-Mail versandt. Zusätzlich kann die Pumpe manuell über einem Schalter,
+# auf dem Node-Red-Dashboard gesteuert werden.
 # Die manuelle Steuerung der Pumpe hat jederzeit Vorrang vor dem Automatikbetrieb.
 #
 # Hardware:
@@ -20,6 +21,7 @@
 # - AHT21 (Temperatur & Luftfeuchtigkeit)
 # - BH1750 (Helligkeit)
 # - VL53L0X (ToF Entfernungssensor)
+# - 5V 2A Netzteil
 # - 5V Relais zur Pumpensteuerung
 # - AM325 Mini Pumpe
 #-----------------------#
@@ -49,7 +51,7 @@ import json
 # I2C-Bus konfigurieren (gemeinsam für alle drei I2C-fähigen-Sensoren, ein I2C-Bus wird verwendet)
 i2c = SoftI2C(scl=machine.Pin(4), sda=machine.Pin(5))
 
-# Ausgangs-Pin für das Relais definieren, Werte initialiseren
+# Variable für das Relais definieren, Werte initialiseren
 relais = Pin(8, Pin.OUT)
 pumpe_laeuft = False
 startzeit = 0
@@ -57,7 +59,7 @@ startzeit = 0
 manueller_modus = False
 automatik_modus = True
 
-# ADC-Pin für den Sensor
+# ADC-Pin für den Sensor definieren
 bodenfeuchte_sensor = Pin(15)
 boden_adc = ADC(bodenfeuchte_sensor)
 
@@ -129,20 +131,20 @@ except Exception as e:
         pass
 
 # MQTT Nachrichten Abfrage zur Steuerung der Pumpe über den Handbetrieb
-# --- MQTT Callback ---
+# MQTT Callback
 def sub_relais(topic, msg):
     global manueller_modus, pumpe_laeuft, startzeit, automatik_modus
     daten = json.loads(msg)
     schalter1 = daten.get('Schalter1')
     if schalter1 == "ON":
-        relais.value(1)  # Relais EIN (HIGH)
+        relais.value(1)  # Relais EIN
         manueller_modus = True
         automatik_modus = False
         pumpe_laeuft = True
         startzeit = time.ticks_ms()
         print("Relais EIN (manuell)")
     elif schalter1 == "OFF":
-        relais.value(0)  # Relais AUS (LOW)
+        relais.value(0)  # Relais AUS
         manueller_modus = False
         automatik_modus = True
         pumpe_laeuft = False
@@ -285,7 +287,7 @@ while True:
     print("Liste nach dem Leeren:", feuchtigkeit_roh)
     print("Liste nach dem Leeren:", helligkeit_roh)
         
-    # --- Standardwartezeit zwischen Messzyklen ---
+    # --- Standardwartezeit zwischen Programmzyklen ---
     
     time.sleep(1)
        
