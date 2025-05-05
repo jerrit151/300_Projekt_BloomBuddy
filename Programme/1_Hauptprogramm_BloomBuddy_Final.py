@@ -187,10 +187,10 @@ while True:
             print(f"Relais läuft manuell seit {vergangene_zeit} ms")
             # Keine Zeitabschaltung im manuellen Modus
         else:
-            if vergangene_zeit >= 15000:
+            if vergangene_zeit >= 25000:
                 relais.value(0)  # Relais AUS (LOW)
                 pumpe_laeuft = False
-                print("Automatik: Relais AUS nach 15 Sekunden")
+                print("Automatik: Relais AUS nach 25 Sekunden")
 
     if not pumpe_laeuft and not manueller_modus:
         relais.value(0)
