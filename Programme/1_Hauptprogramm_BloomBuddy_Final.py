@@ -3,7 +3,7 @@
 # Programm:    	Automatische Pflanzenbewässerung
 # Version:     	V1.0
 # Programmierer: Jerrit Schnaible
-# Datum:       	02.05.2025
+# Datum:       	05.05.2025
 #
 # Beschreibung:
 # Dieses Programm liest regelmäßig Sensordaten ein (Bodenfeuchtigkeit, Entfernung (Füllstand), Temperatur,
