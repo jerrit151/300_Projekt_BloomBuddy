@@ -21,7 +21,7 @@
         "rh": 0,
         "inputs": 0,
         "x": 170,
-        "y": 60,
+        "y": 160,
         "wires": [
             [
                 "2b9c21a48eb14600",
@@ -37,16 +37,16 @@
         "id": "2b9c21a48eb14600",
         "type": "function",
         "z": "6ea01713093f2722",
-        "name": "function 1",
-        "func": "var fuellstand = { payload: msg.payload.Fuellstand};\nreturn fuellstand;\n",
+        "name": "Füllstand extrahieren",
+        "func": "// Hier wird der Füllstand extrahiert\nvar fuellstand = { payload: msg.payload.Fuellstand};\nreturn fuellstand;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 380,
-        "y": 60,
+        "x": 420,
+        "y": 160,
         "wires": [
             [
                 "f1a77c6b47246d1d",
@@ -68,8 +68,8 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 600,
-        "y": 100,
+        "x": 700,
+        "y": 320,
         "wires": []
     },
     {
@@ -96,8 +96,8 @@
         "seg2": "",
         "diff": false,
         "className": "",
-        "x": 620,
-        "y": 140,
+        "x": 720,
+        "y": 360,
         "wires": []
     },
     {
@@ -117,8 +117,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 900,
-        "y": 60,
+        "x": 1280,
+        "y": 160,
         "wires": [
             [
                 "7cc407de9bcdddc7"
@@ -138,15 +138,15 @@
         "tls": true,
         "name": "schnaible2@web.de",
         "dname": "E-Mail Versand",
-        "x": 1760,
-        "y": 60,
+        "x": 2320,
+        "y": 160,
         "wires": []
     },
     {
         "id": "7cc407de9bcdddc7",
         "type": "function",
         "z": "6ea01713093f2722",
-        "name": "function 4",
+        "name": "Betreff und Nachricht der E-Mail",
         "func": "msg.topic=\"Warnung: Füllstand niedrig!\";\nmsg.payload=\"Füllstand des Wassertanks ist niedriger als 20% (260mm), bitte fülle Wasser nach\";\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -154,8 +154,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1160,
-        "y": 60,
+        "x": 1670,
+        "y": 160,
         "wires": [
             [
                 "c373b41b51ca85f0",
@@ -184,8 +184,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 930,
-        "y": 120,
+        "x": 1310,
+        "y": 280,
         "wires": [
             [
                 "7cc407de9bcdddc7"
@@ -196,7 +196,7 @@
         "id": "c373b41b51ca85f0",
         "type": "debug",
         "z": "6ea01713093f2722",
-        "name": "debug 6",
+        "name": "E-Mail auslesen",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -205,15 +205,15 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1320,
-        "y": 120,
+        "x": 1700,
+        "y": 220,
         "wires": []
     },
     {
         "id": "2b5040a28ffc22e0",
         "type": "debug",
         "z": "6ea01713093f2722",
-        "name": "debug 7",
+        "name": "Temperatur überprüfen",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -222,24 +222,24 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 600,
-        "y": 240,
+        "x": 740,
+        "y": 500,
         "wires": []
     },
     {
         "id": "9c54f0e4af92a3b0",
         "type": "function",
         "z": "6ea01713093f2722",
-        "name": "function 5",
-        "func": "var temperatur = { payload: msg.payload.Temperatur};\nreturn temperatur;",
+        "name": "Temperatur extrahieren",
+        "func": "// Hier wird die Temperatur extrahiert\nvar temperatur = { payload: msg.payload.Temperatur};\nreturn temperatur;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 380,
-        "y": 260,
+        "x": 430,
+        "y": 520,
         "wires": [
             [
                 "2b5040a28ffc22e0",
@@ -272,24 +272,24 @@
         "seg2": "",
         "diff": false,
         "className": "",
-        "x": 610,
-        "y": 280,
+        "x": 710,
+        "y": 540,
         "wires": []
     },
     {
         "id": "2deb473108930253",
         "type": "function",
         "z": "6ea01713093f2722",
-        "name": "function 6",
-        "func": "var luftfeuchtigkeit = { payload: msg.payload.Luftfeuchtigkeit};\nreturn luftfeuchtigkeit;",
+        "name": "Luftfeuchtigkeit extrahieren",
+        "func": "// Hier werden die Daten für die Luftfeuchtigkeit extrahiert\nvar luftfeuchtigkeit = { payload: msg.payload.Luftfeuchtigkeit};\nreturn luftfeuchtigkeit;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 380,
-        "y": 420,
+        "x": 440,
+        "y": 680,
         "wires": [
             [
                 "65770247ed601d36",
@@ -321,8 +321,8 @@
         "seg2": "",
         "diff": false,
         "className": "",
-        "x": 620,
-        "y": 420,
+        "x": 720,
+        "y": 680,
         "wires": []
     },
     {
@@ -363,8 +363,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 620,
-        "y": 460,
+        "x": 720,
+        "y": 720,
         "wires": [
             []
         ]
@@ -407,8 +407,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 610,
-        "y": 320,
+        "x": 710,
+        "y": 580,
         "wires": [
             []
         ]
@@ -417,16 +417,16 @@
         "id": "28e3a01dd97facc7",
         "type": "function",
         "z": "6ea01713093f2722",
-        "name": "function 7",
-        "func": "var helligkeit = { payload: msg.payload.Helligkeit };\nreturn helligkeit;",
+        "name": "Helligkeit extrahieren",
+        "func": "// Hier wird die Helligkeit extrahiert\nvar helligkeit = { payload: msg.payload.Helligkeit };\nreturn helligkeit;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 380,
-        "y": 540,
+        "x": 420,
+        "y": 820,
         "wires": [
             [
                 "342f68ac7102c5c2",
@@ -458,8 +458,8 @@
         "seg2": "",
         "diff": false,
         "className": "",
-        "x": 600,
-        "y": 540,
+        "x": 700,
+        "y": 820,
         "wires": []
     },
     {
@@ -500,8 +500,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 600,
-        "y": 580,
+        "x": 700,
+        "y": 860,
         "wires": [
             []
         ]
@@ -510,16 +510,16 @@
         "id": "3751fff93d4afa06",
         "type": "function",
         "z": "6ea01713093f2722",
-        "name": "function 8",
-        "func": "var bodenfeuchtigkeit = { payload: msg.payload.Bodenfeuchtigkeit };\nreturn bodenfeuchtigkeit;\nreturn msg;",
+        "name": "Bodenfeuchtigkeit extrahieren",
+        "func": "// Hier wird die Bodenfeuchtigkeit extrahiert\nvar bodenfeuchtigkeit = { payload: msg.payload.Bodenfeuchtigkeit };\nreturn bodenfeuchtigkeit;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 380,
-        "y": 660,
+        "x": 450,
+        "y": 980,
         "wires": [
             [
                 "0af1b4436c340a27",
@@ -551,8 +551,8 @@
         "seg2": "",
         "diff": false,
         "className": "",
-        "x": 630,
-        "y": 660,
+        "x": 730,
+        "y": 980,
         "wires": []
     },
     {
@@ -593,8 +593,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 630,
-        "y": 700,
+        "x": 730,
+        "y": 1020,
         "wires": [
             []
         ]
@@ -605,8 +605,8 @@
         "z": "6ea01713093f2722",
         "mydb": "c93c5390c47ffe2c",
         "name": "pflanzendatenbank",
-        "x": 690,
-        "y": 800,
+        "x": 730,
+        "y": 1160,
         "wires": [
             [
                 "9db417b2f483d5c6"
@@ -618,7 +618,7 @@
         "type": "function",
         "z": "6ea01713093f2722",
         "name": "In Datenbank schreiben",
-        "func": "let temperatur = msg.payload.Temperatur;\nlet luftfeuchtigkeit = msg.payload. Luftfeuchtigkeit;\nlet helligkeit = msg.payload. Helligkeit;\nlet fuellstand = msg.payload. Fuellstand;\nlet bodenfeuchtigkeit = msg.payload. Bodenfeuchtigkeit;\n\n//Timestamp in einem Format, das SQLite verarbeiten kann (YYYY-MM-DD HH:MM:SS)\nconst zeit = new Date;\nzeit.setHours(zeit.getHours() +2); //\" Stunden Zeitverschiebung\"\nlet timestamp = zeit.toISOString().replace(\"T\", \" \").substring(0, 19);\n\nmsg.topic = \"INSERT INTO sensorwerte_wohnung (Temperatur, Luftfeuchtigkeit, Helligkeit, Fuellstand, Bodenfeuchtigkeit, Zeit) VALUES (?,?,?,?,?,?)\";\nmsg.payload = [temperatur, luftfeuchtigkeit, helligkeit, fuellstand, bodenfeuchtigkeit, timestamp];\n\nreturn msg;",
+        "func": "// Payload Definition\nlet temperatur = msg.payload.Temperatur;\nlet luftfeuchtigkeit = msg.payload. Luftfeuchtigkeit;\nlet helligkeit = msg.payload. Helligkeit;\nlet fuellstand = msg.payload. Fuellstand;\nlet bodenfeuchtigkeit = msg.payload. Bodenfeuchtigkeit;\n\n//Timestamp in einem Format, das SQLite verarbeiten kann (YYYY-MM-DD HH:MM:SS)\nconst zeit = new Date;\nzeit.setHours(zeit.getHours() +2); //\" Stunden Zeitverschiebung\"\nlet timestamp = zeit.toISOString().replace(\"T\", \" \").substring(0, 19);\n// Erstellt die Topics um diese in die Datenbank zu schreiben\nmsg.topic = \"INSERT INTO sensorwerte_wohnung (Temperatur, Luftfeuchtigkeit, Helligkeit, Fuellstand, Bodenfeuchtigkeit, Zeit) VALUES (?,?,?,?,?,?)\";\n// Schreibt die gemessenen Werte in die Datenbank\nmsg.payload = [temperatur, luftfeuchtigkeit, helligkeit, fuellstand, bodenfeuchtigkeit, timestamp];\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -626,7 +626,7 @@
         "finalize": "",
         "libs": [],
         "x": 430,
-        "y": 800,
+        "y": 1160,
         "wires": [
             [
                 "041303295dbd050d",
@@ -638,7 +638,7 @@
         "id": "9db417b2f483d5c6",
         "type": "debug",
         "z": "6ea01713093f2722",
-        "name": "debug 8",
+        "name": "Werte kontrollieren",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -647,15 +647,15 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 920,
-        "y": 800,
+        "x": 990,
+        "y": 1160,
         "wires": []
     },
     {
         "id": "8565116410e0e39c",
         "type": "debug",
         "z": "6ea01713093f2722",
-        "name": "debug 9",
+        "name": "Ausgabe in die Datenbank",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -664,8 +664,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 660,
-        "y": 860,
+        "x": 760,
+        "y": 1220,
         "wires": []
     },
     {
@@ -685,8 +685,8 @@
         "drop": true,
         "allowrate": false,
         "outputs": 1,
-        "x": 1420,
-        "y": 60,
+        "x": 2020,
+        "y": 160,
         "wires": [
             [
                 "f89ef3408b2ed91f"
@@ -731,8 +731,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 620,
-        "y": 180,
+        "x": 720,
+        "y": 400,
         "wires": [
             []
         ]
@@ -764,7 +764,7 @@
         "animate": false,
         "className": "",
         "x": 460,
-        "y": 980,
+        "y": 1340,
         "wires": [
             [
                 "43966f1f772a6869",
@@ -786,24 +786,145 @@
         "correl": "",
         "expiry": "",
         "broker": "f52d8dda491674f7",
-        "x": 760,
-        "y": 980,
+        "x": 740,
+        "y": 1340,
         "wires": []
     },
     {
         "id": "5d217682f66511bc",
         "type": "debug",
         "z": "6ea01713093f2722",
-        "name": "debug 10",
+        "name": "Schalterstellung überprüfen",
         "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "false",
+        "complete": "payload",
+        "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
+        "x": 760,
+        "y": 1420,
+        "wires": []
+    },
+    {
+        "id": "1b3509254f94d1a6",
+        "type": "comment",
+        "z": "6ea01713093f2722",
+        "name": "Hier wird der Messwert für die Helligkeit dargestellt (Gauge & Chart)",
+        "info": "",
+        "x": 880,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "298f7659732eb0fc",
+        "type": "comment",
+        "z": "6ea01713093f2722",
+        "name": "Hier wird der Messwert für die Bodenfeuchtigkeit dargestellt (Gauge & Chart)",
+        "info": "",
+        "x": 910,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "f23a815ccc07ddc6",
+        "type": "comment",
+        "z": "6ea01713093f2722",
+        "name": "Hier wird der Messwert für die Luftfeuchtigkeit dargestellt (Gauge & Chart)",
+        "info": "",
+        "x": 900,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "3e5af4204ef19876",
+        "type": "comment",
+        "z": "6ea01713093f2722",
+        "name": "Hier wird der Messwert für die Temperatur dargestellt (Gauge & Chart)",
+        "info": "",
+        "x": 890,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "344953350ff2219a",
+        "type": "comment",
+        "z": "6ea01713093f2722",
+        "name": "Hier wird der Messwert für den Füllstand dargestellt (Gauge & Chart)",
+        "info": "",
+        "x": 880,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "fbd55ed153995ceb",
+        "type": "comment",
+        "z": "6ea01713093f2722",
+        "name": "Hier werden die Messwerte von den Sensoren empfangen (Topic: Zuhause/Wohnung/BloomBuddy)",
+        "info": "",
+        "x": 440,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "3e0d21d19089fdc7",
+        "type": "comment",
+        "z": "6ea01713093f2722",
+        "name": "E-Mail manuell senden für Tests",
+        "info": "",
+        "x": 1310,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "c93c10ef5836d183",
+        "type": "comment",
+        "z": "6ea01713093f2722",
+        "name": "Hier wird der Füllstand abgefragt",
+        "info": "",
+        "x": 1270,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "535f6844fd175f98",
+        "type": "comment",
+        "z": "6ea01713093f2722",
+        "name": "Versender & Empfänger der E-Mail definieren",
+        "info": "",
+        "x": 2410,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "49bc50789fd527cc",
+        "type": "comment",
+        "z": "6ea01713093f2722",
+        "name": "MQTT Ausgang",
+        "info": "",
         "x": 720,
-        "y": 1060,
+        "y": 1300,
+        "wires": []
+    },
+    {
+        "id": "eb7a3bab592d5780",
+        "type": "comment",
+        "z": "6ea01713093f2722",
+        "name": "Schalter auf dem Dashboard",
+        "info": "",
+        "x": 440,
+        "y": 1300,
+        "wires": []
+    },
+    {
+        "id": "82b751773cdd843b",
+        "type": "comment",
+        "z": "6ea01713093f2722",
+        "name": "Datenbank Bennenung",
+        "info": "",
+        "x": 740,
+        "y": 1120,
         "wires": []
     },
     {

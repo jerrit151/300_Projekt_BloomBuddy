@@ -88,12 +88,12 @@ bh1750_sensor = BH1750(i2c)
 # === WLAN-Verbindung herstellen ===
 
 # WLAN-Parameter für die Schule
-#ssid = 'BZTG-IoT'
-#password = 'WerderBremen24'
+ssid = 'BZTG-IoT'
+password = 'WerderBremen24'
 
 # WLAN-Parameter für Zuhause
-ssid = 'KrustyKrab2'
-password = 'WerderBremen2501'
+#ssid = 'KrustyKrab2'
+#password = 'WerderBremen2501'
 
 # WLAN verbinden
 wlan = network.WLAN(network.STA_IF)
@@ -115,10 +115,10 @@ print('WLAN verbunden')
 # === MQTT-Verbindung aufbauen ===
 
 # MQTT-Setup
-BROKER_IP = b"192.168.33.79"
-BROKER_PORT = 1883
+BROKER_IP = b"192.168.1.195" #I P-Adresse des Brokers (in diesem Fall des Laptops)
+BROKER_PORT = 1883 # Portdefinition für den Broker
 CLIENT_ID = b"ESP32_Client"
-TOPIC = b"Zuhause/Wohnung/BloomBuddy"
+TOPIC = b"Zuhause/Wohnung/BloomBuddy" # Topic für MQTT-Daten
 
 # MQTT-Client erstellen und verbinden
 client = MQTTClient(CLIENT_ID, BROKER_IP, port=BROKER_PORT)
