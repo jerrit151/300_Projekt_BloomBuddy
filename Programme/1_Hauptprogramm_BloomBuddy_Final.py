@@ -14,6 +14,7 @@
 # 20% fällt. In diesem Fall wird dann eine E-Mail versandt. Zusätzlich kann die Pumpe manuell über einem Schalter,
 # auf dem Node-Red-Dashboard gesteuert werden.
 # Die manuelle Steuerung der Pumpe hat jederzeit Vorrang vor dem Automatikbetrieb.
+# Zudem kann die Pumpe nicht mehr angesteuert werden wenn der Füllstand des Wassertanks unter 280mm liegt.
 #
 # Hardware:
 # - ESP32 S3
@@ -58,6 +59,9 @@ startzeit = 0
 #Variablen für die Steuerung der Pumpe per MQTT über Node-Red
 manueller_modus = False
 automatik_modus = True
+
+#Variable für die Füllstandsabfrage zur Pumpensteuerung
+fuellstand_mm = 0
 
 # ADC-Pin für den Sensor definieren
 bodenfeuchte_sensor = Pin(15)
@@ -159,7 +163,10 @@ print("MQTT-Abonnement auf", TOPIC.decode(), "aktiviert")
 while True:
     
     client.check_msg()  # Prüft, ob neue MQTT-Nachricht da ist
-
+    
+    # Füllstand vom Wassertank abfragen und in die Variable schreiben
+    fuellstand_mm = tof_sensor.read()  # Messwert vom VL53L0X
+    
     # --- Bodenfeuchtigkeit erfassen & Pumpensteuerung ---
     
     # Sensorwert lesen
@@ -175,7 +182,8 @@ while True:
     # --- Pumpensteuerung ---
     
     # --- Automatikbetrieb ---
-    if automatik_modus and bodenfeuchtigkeit <= 40 and not pumpe_laeuft:
+    # Pumpe läuft in Automatik an wenn der Automatikmodus aktiv, die Bodenfeuchtigkeit unter 40 liegt und der Füllstand des Wassertanks über 280mm liegt
+    if automatik_modus and bodenfeuchtigkeit <= 40 and fuellstand_mm < 280 and not pumpe_laeuft :
         relais.value(1)  # Relais EIN (HIGH)
         startzeit = time.ticks_ms()
         pumpe_laeuft = True
