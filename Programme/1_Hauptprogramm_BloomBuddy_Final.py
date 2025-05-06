@@ -3,7 +3,7 @@
 # Programm:    	Automatische Pflanzenbewässerung
 # Version:     	V1.0
 # Programmierer: Jerrit Schnaible
-# Datum:       	05.05.2025
+# Datum:       	06.05.2025
 #
 # Beschreibung:
 # Dieses Programm liest regelmäßig Sensordaten ein (Bodenfeuchtigkeit, Entfernung (Füllstand), Temperatur,
@@ -182,7 +182,8 @@ while True:
     # --- Pumpensteuerung ---
     
     # --- Automatikbetrieb ---
-    # Pumpe läuft in Automatik an wenn der Automatikmodus aktiv, die Bodenfeuchtigkeit unter 40 liegt und der Füllstand des Wassertanks über 280mm liegt
+    # Pumpe läuft in Automatik an wenn der Automatikmodus aktiv, die Bodenfeuchtigkeit unter 40 liegt
+    # und der Füllstand des Wassertanks über 280mm liegt
     if automatik_modus and bodenfeuchtigkeit <= 40 and fuellstand_mm < 280 and not pumpe_laeuft :
         relais.value(1)  # Relais EIN (HIGH)
         startzeit = time.ticks_ms()
