@@ -14,7 +14,7 @@
 # 20% fällt. In diesem Fall wird dann eine E-Mail versandt. Zusätzlich kann die Pumpe manuell über einem Schalter,
 # auf dem Node-Red-Dashboard gesteuert werden.
 # Die manuelle Steuerung der Pumpe hat jederzeit Vorrang vor dem Automatikbetrieb.
-# Zudem kann die Pumpe nicht mehr angesteuert werden wenn der Füllstand des Wassertanks unter 280mm liegt.
+# Zudem kann die Pumpe nicht mehr angesteuert werden wenn der Füllstand des Wassertanks unter 230mm liegt.
 #
 # Hardware:
 # - ESP32 S3
@@ -92,12 +92,12 @@ bh1750_sensor = BH1750(i2c)
 # === WLAN-Verbindung herstellen ===
 
 # WLAN-Parameter für die Schule
-ssid = 'BZTG-IoT'
-password = 'WerderBremen24'
+#ssid = 'BZTG-IoT'
+#password = 'WerderBremen24'
 
 # WLAN-Parameter für Zuhause
-#ssid = 'KrustyKrab2'
-#password = 'WerderBremen2501'
+ssid = 'KrustyKrab2'
+password = 'WerderBremen2501'
 
 # WLAN verbinden
 wlan = network.WLAN(network.STA_IF)
@@ -119,7 +119,7 @@ print('WLAN verbunden')
 # === MQTT-Verbindung aufbauen ===
 
 # MQTT-Setup
-BROKER_IP = b"192.168.1.195" #I P-Adresse des Brokers (in diesem Fall des Laptops)
+BROKER_IP = b"192.168.33.79" #I P-Adresse des Brokers (in diesem Fall des Laptops)
 BROKER_PORT = 1883 # Portdefinition für den Broker
 CLIENT_ID = b"ESP32_Client"
 TOPIC = b"Zuhause/Wohnung/BloomBuddy" # Topic für MQTT-Daten
@@ -184,7 +184,7 @@ while True:
     # --- Automatikbetrieb ---
     # Pumpe läuft in Automatik an wenn der Automatikmodus aktiv, die Bodenfeuchtigkeit unter 40 liegt
     # und der Füllstand des Wassertanks über 280mm liegt
-    if automatik_modus and bodenfeuchtigkeit <= 40 and fuellstand_mm < 280 and not pumpe_laeuft :
+    if automatik_modus and bodenfeuchtigkeit <= 40 and fuellstand_mm < 230 and not pumpe_laeuft :
         relais.value(1)  # Relais EIN (HIGH)
         startzeit = time.ticks_ms()
         pumpe_laeuft = True
